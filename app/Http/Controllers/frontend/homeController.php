@@ -100,7 +100,7 @@ class homeController extends Controller
         return view('frontent.doctor',compact('page_content','doctors','categories'));
     }
 
-    public function sigle_doctor($slug){
+    public function sigle_doctor( string $slug){
 
     // $doctor = Doctor::where('slug',$slug)->first();
 

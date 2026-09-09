@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Page_management extends Model
 {
+
+   protected $table = 'page_managements';
+
      protected $fillable = [
 
 

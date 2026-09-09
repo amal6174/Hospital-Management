@@ -91,8 +91,10 @@
 	      	<div class="position-relative doctor-inner-box">
 		        <div class="doctor-profile">
 	               <div class="doctor-img">
-	               		<img src="{{ asset('storage/'.$doctor->image) }}" alt="doctor-image" class="img-fluid w-100"
+                    <a href="{{ route('single-doctor',$doctor->slug) }}">
+	               		<img src="{{ asset('storage/'.$doctor->image) }}" href="{{ route('single-doctor',$doctor->slug) }}" alt="doctor-image" class="img-fluid w-100"
                         style="width:80px; height:220px; ">
+                    </a>
 	               </div>
 	            </div>
                 <div class="content mt-3">

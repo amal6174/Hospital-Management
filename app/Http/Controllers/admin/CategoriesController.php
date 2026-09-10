@@ -8,10 +8,19 @@ use App\Models\Category;
 
 class CategoriesController extends Controller
 {
-    public function categories(){
+    public function categories(Request $request){
 
 
     $categories = Category::latest()->paginate(config('app.pagination_limit'));
+
+
+        if ($request->ajax()) {
+        return view(
+            'admin.categories.partials.category-list',
+            compact('categories')
+        )->render();
+    }
+
 
 
     return view('admin.viewcategories', compact('categories'));
@@ -63,17 +72,21 @@ class CategoriesController extends Controller
 
 
 
-    public function edit($id){
+    public function edit(Request $request, $id){
 
-        // Category::where('id',$id)
-        //  ->update([
-        //     'category_name' =
-        //  ])
+
 
         $categories = Category::findOrFail($id);
 
-        return view('admin.edit_category', compact('categories'));
+        $page   =  $request->page ?? 1;
+
+        return view('admin.edit_category', compact('categories','page'));
     }
+
+
+
+
+
 
     public function update(Request $request,$id){
 //    dd($request->all(), $request->file('image'));
@@ -114,7 +127,19 @@ class CategoriesController extends Controller
 
     $categories->save();
 
-    return redirect()->route('admin.view.categories')->with('success','Category update successfull');
+      $page = $request->page ?? 1;
+
+
+
+
+
+
+    // return redirect()
+    //     ->route('categories.index', ['page' => $page])
+    //     ->with('success', 'Category updated successfully.');
+
+    return redirect()
+           ->route('admin.view.categories',['page' => $page])->with('success','Category update successfull');
 
 
     }

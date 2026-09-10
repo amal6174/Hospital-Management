@@ -86,13 +86,15 @@ Route::prefix('admin')->group(function () {
     // Logout
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
+
     // categories
     Route::get('category',     [CategoriesController::class, 'index'])->name('admin.category.index');
     Route::get('/categories',  [CategoriesController::class, 'categories_page'])->name('admin.categories_page');
     Route::post('/categories', [CategoriesController::class, 'caegory_store'])->name('admin.category.store');
 
+
     Route::get('/view-categories',         [CategoriesController::class, 'categories'])->name('admin.view.categories');
-    Route::get('/categories-eedit/{id}',   [CategoriesController::class, 'edit'])->name('admin.category.edit');
+    Route::get('/categories-edit/{id}',   [CategoriesController::class, 'edit'])->name('admin.category.edit');
     Route::put('/categories-update/{id}',  [CategoriesController::class, 'update'])->name('admin.category.update');
     Route::delete('/category-delete/{id}', [CategoriesController::class, 'destroy'])->name('admin.category.destroy');
     //

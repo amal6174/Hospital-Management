@@ -251,16 +251,18 @@
 
 
 
-                    <form action="#" method="GET" >
+
                         <div class="input-group input-group-sm" style="width:260px;">
                             <input type="text"
                                    class="form-control"
                                    placeholder="Search..."
-                                   class="form-control">
-
+                                   class="form-control"
+                                   id="text"
+                                   name="search">
+{{--
                             <button class="btn btn-primary" type="submit">
                                 <i class="search">Search</i>
-                            </button>
+                            </button> --}}
                         </div>
                     </form>
                 </div >
@@ -272,133 +274,13 @@
     </a>
 
 </div>
-<div class="table-responsive">
+<div id="doctors-list" class="table-responsive">
 
-    <table class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Slug</th>
-                <th>Category</th>
-                <th>Qualification</th>
-                {{-- <th>Designation</th> --}}
-                {{-- <th>Experience</th> --}}
-                {{-- <th>Fee</th> --}}
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Gender</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
+    @include('admin.doctors.partials.doctor-lists',['doctors' => $doctors])
 
-        <tbody>
-
-            @foreach($doctors as $doctor)
-
-                <tr>
-
-                    <td>
-                        {{ $loop->iteration }}
-                    </td>
-
-                    <td>
-                        @if($doctor->image)
-                            <img
-                                 src="{{ asset('storage/' . $doctor->image) }}"
-                                width="50"
-                                height="50"
-                                class="rounded"
-                                 alt="{{ $doctor->name }}"
-                            >
-                        @else
-                            No Image
-                        @endif
-                    </td>
-
-                    <td>
-                        {{ $doctor->name }}
-                    </td>
-                    <td>
-                        {{ $doctor->slug }}
-                    </td>
-
-                    <td>
-                        {{ $doctor->category->category_name ?? 'N/A' }}
-                    </td>
-
-                    <td>
-                        @foreach($doctor->qualifications as $qualification)
-
-                            <span class="badge bg-primary">
-                                {{ $qualification->qualification_name }}
-                            </span>
-
-                        @endforeach
-                    </td>
-
-                    {{-- <td>
-                        {{ $doctor->designation }}
-                    </td> --}}
-{{--
-                    <td>
-                        {{ $doctor->experience }} Years
-                    </td> --}}
-{{--
-                    <td>
-                        ₹{{ $doctor->consultant_fee }}
-                    </td> --}}
-
-                    <td>
-                        {{ $doctor->email }}
-                    </td>
-
-                    <td>
-                        {{ $doctor->phone }}
-                    </td>
-
-                    <td>
-                        {{ ucfirst($doctor->gender) }}
-                    </td>
-
-                    <td>
-                        @if($doctor->status == 1)
-                            <span class="badge bg-success">
-                                Active
-                            </span>
-                        @else
-                            <span class="badge bg-danger">
-                                Inactive
-                            </span>
-                        @endif
-                    </td>
-
-                    <td>
-                       <a href="{{ route('admin.doctor.edit',$doctor->id) }}"
-   class="btn btn-sm btn-primary">
-    Edit
-</a>
-
-                        {{-- <button class="btn btn-sm btn-danger">
-                            Delete
-                        </button> --}}
-
-                        <a  href="{{ route('admin.doctor.destroy',$doctor->id) }}" class="btn btn-sm btn-danger"
-                             onclick="return confirm('Are you sure you want to delete this doctor?')">Delete</a>
-                    </td>
-
-                </tr>
-
-            @endforeach
-
-        </tbody>
-
-    </table>
-    <div class="mt-3">
-    {{ $doctors->links() }}
-</div>
+                                 {{-- <div class="mt-4">
+                                                {{ $doctors->links() }}
+                                            </div> --}}
 
                  </div>
 
@@ -459,7 +341,7 @@
   <!-- Custom js for this page-->
   <!-- <script src="js/dashboard.js"></script>
   <script src="js/Chart.roundedBarCharts.js"></script> -->
-  <script src="{{ asset('admin/js/dashboard.js') }}"></script>
+<script src="{{ asset('admin/js/dashboard.js') }}"></script>
 <script src="{{ asset('admin/js/Chart.roundedBarCharts.js') }}"></script>
 {{-- <script src="{{ asset('admin/js/category.js') }}"></script> --}}
 <script src="{{ asset('js/ category.js') }}"></script>
@@ -467,6 +349,121 @@
   <script src="/admin/js/dashboard.js"></script>
 <script src="/admin/js/Chart.roundedBarCharts.js"></script> -->
   <!-- End custom js for this page-->
+
+
+  {{-- <script>
+
+    let currentPage  = {{ $doctors->currentPage() }};
+
+    async function loadDoctors(page = 1) {
+
+        currentPage = page;
+
+        try{
+            const response  = await fetch('/admin/admin-doctor-view?page='+ page,
+            {
+                method: 'GET',
+                headers:{
+                      'X-Requested-With': 'XMLHttpRequest',
+                      'Accept': 'text/html'
+                }
+
+            });
+
+            if(!response.ok){
+                throw new Error('Failed to load doctors');
+            }
+
+            const  html  =  await response.text();
+            console.log(page);
+            console.log(html);
+
+        document.getElementById('doctors-list').innerHTML = html;
+
+
+
+        }catch(error){
+            console.error(error);
+
+        }
+
+
+
+
+    }
+
+    document.addEventListener('click', function(event)
+    {
+    const link = event.target.closest(
+        '#doctors-list .pagination a'
+    );
+
+    if (!link) {
+        return;
+    }
+
+    event.preventDefault();
+
+
+    const url = new URL(link.href);
+
+    const page = url.searchParams.get('page');
+
+
+    loadDoctors(page);
+     });
+
+
+  </script> --}}
+
+  <script>
+
+    let currentPage  =  1;
+
+
+
+    document.getElementById('text').addEventListener('keyup', function () {
+
+        console.log("hell");
+
+    loadDoctors(1);
+
+     });
+    async function  loadDoctors(page = 1) {
+
+        const text  =  document.getElementById("text").value;
+
+        const url = `{{ route('admin.doctor.index') }}?page=${page}&text=${encodeURIComponent(text)}`;
+
+        try{
+
+            const response = await fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+                  }
+             });
+
+              if (!response.ok) {
+            throw new Error('Something went wrong');
+                 }
+
+        const html = await response.text();
+        document.getElementById('doctors-list').innerHTML = html;
+
+
+        }catch(error){
+                 console.error(error);
+
+        }
+
+
+    }
+
+
+
+
+  </script>
+
 </body>
 
 </html>

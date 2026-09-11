@@ -239,6 +239,10 @@
                       @enderror
                     </div>
 
+                    <div>
+                        <input type="hidden" name="page" value="{{$page}}">
+                    </div>
+
                     <div class="form-group">
                       <label for="name">Name</label>
                       <input type="text" id="name" name="name"
@@ -358,7 +362,7 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary mr-2">Update</button>
-                    <a href="{{ route('admin.doctor.index') }}" class="btn btn-light">Cancel</a>
+                    <a href="{{ route('admin.doctor.index') }}?page={{ $page}}" class="btn btn-light">Cancel</a>
                   </form>
                 </div>
               </div>

@@ -99,6 +99,10 @@ class DoctorUpdateRequest extends FormRequest
             'required',
             'boolean',
         ],
+
+        'page' => [
+            'required'
+        ]
         ];
     }
 }

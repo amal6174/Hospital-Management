@@ -15,45 +15,82 @@ use App\Models\Qualification;
 use Throwable;
 use Illuminate\Support\Facades\Storage;
 
+use function Termwind\render;
+
 class DoctorController extends Controller
 {
     public function index(Request $request)
+
     {
+        $searchString =  $request->text;
+
+        $search = $request->text;
 
         $doctors  =  Doctor::with([
             'category',
             'qualifications'
         ])->latest()->paginate(config('app.pagination_limit'));
 
+           // manual search
+        // if ($searchString != null) {
+
+        //     $doctors =  Doctor::where('name', 'like', "%$searchString%")
+        //         ->orWhere('email', 'like', "%$searchString%")
+        //         ->orWhere('phone', 'like', "%$searchString%")
+        //         ->paginate(5);
+
+        //      return view('admin.doctor_view', compact('doctors'));
+        // }
+
+        $doctors = Doctor::with('category')
+                             ->when($search, function ($query) use ($search){
+
+                             $query->where( function ($q) use ($search){
+
+                                // Doctor field
+                                $q->where('name', 'like',  "%{$search}%")
+                                ->orWhere('email','like', "%{$search}%")
+                                ->orWhere('phone', 'like', "%{$search}%")
 
 
-        //   if($request-=>ajax()){
 
-        //   return response()->json([
-        //     'doctors' => $doctors->items(),
-        //     'current_page' => $doctors->currentPage(),
-        //     'last_page' => $doctors->lastPage(),
-        //     'total' => $doctors->total(),
-        // ]);
+                                ->orWhereHas('category', function ($categoryQuery) use ($search){
 
-        //   }
+                                $categoryQuery->where('category_name', 'like', "%{$search}%");
 
+                                });
+
+                             });
+
+                             })  ->latest()
+                                 ->paginate(config('app.pagination_limit'))
+                                 ->withQueryString();
+
+
+
+
+
+
+
+
+
+        if ($request->ajax()) {
+
+            return view('admin.doctors.partials.doctor-lists', [
+                'doctors' => $doctors
+            ])->render();
+        }
+
+
+
+        // admin.doctors.partials.doctor-lists
 
         return view('admin.doctor_view', compact('doctors'));
     }
 
+
     public function create()
     {
-
-        //   $doctors = Doctor::with([
-        //            'category',
-        //            'qualifications'
-        //             ])->get();
-
-        //   $doctors = Doctor::with([
-        //     'categories',
-        //     'qualifications'
-        //   ])->get();
 
 
         $categories  =  Category::where('status', 1)
@@ -120,7 +157,7 @@ class DoctorController extends Controller
     }
 
 
-    public function edit(Doctor $doctor)
+    public function edit(Request $request, Doctor $doctor)
     {
         // dd($doctor);
 
@@ -139,11 +176,17 @@ class DoctorController extends Controller
             ->pluck('id')
             ->toArray();
 
+
+        $page  =  $request->page;
+
+
+
         return view('admin.doctor_edit', compact(
             'doctor',
             'categories',
             'qualifications',
-            'selectedQualifications'
+            'selectedQualifications',
+            'page'
         ));
 
 
@@ -201,6 +244,7 @@ class DoctorController extends Controller
 
 
             $doctor->update($data);
+            $page  =  $request->page ?? 1;
 
 
             // Update pivot table data
@@ -208,8 +252,10 @@ class DoctorController extends Controller
 
             DB::commit();
 
+
+
             return redirect()
-                ->route('admin.doctor.index')
+                ->route('admin.doctor.index', ['page' => $page])
                 ->with('success', 'Doctor Updated Successfully');
         } catch (Throwable $e) {
 
@@ -226,12 +272,9 @@ class DoctorController extends Controller
     public function delete($id)
     {
 
-        try{
 
-
-
-        } catch(\Throwable $e){
-
+        try {
+        } catch (\Throwable $e) {
         }
 
         $doctor =  Doctor::findOrfail($id);
@@ -240,4 +283,11 @@ class DoctorController extends Controller
 
         return redirect()->route('admin.doctor.index');
     }
+
+    // public function Search($searchString){
+
+
+
+    // }
+
 }

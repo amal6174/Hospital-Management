@@ -396,7 +396,7 @@
 
         function loadCategories(page = 1){
 
-    currentPage = page;
+            currentPage = page;
 
     $.ajax({
         url:'/view-categories?page=' + page,

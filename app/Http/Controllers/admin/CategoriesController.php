@@ -192,10 +192,10 @@ class CategoriesController extends Controller
     // ->latest()
     // ->paginate(10);
 
-    $categories = Category::when($search, function($query) use ($search) {
+        $categories = Category::when($search, function($query) use ($search) {
         $query->where('category_name','LIKE', "%{$search}%");
 
-    })->latest()->paginate(10);
+    })->latest()->paginate(5);
 
     return view('admin.viewcategories', compact('categories', 'search'));
     }
